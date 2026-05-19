@@ -1,10 +1,65 @@
 #include <iostream>
 #include <glad.h>
 #include <glfw3.h>
-
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <assert.h>
+#include "shader.hpp"
+#include "mesh.hpp"
+#include "object.hpp"
 
 int main(int argc, char const *argv[])
 {
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    
+    GLFWwindow* window = glfwCreateWindow(800, 600, "game", NULL, NULL);
+    if (window == NULL)
+    {
+        std::cout << "Failed to create a window\n";
+        glfwTerminate();
+        assert(false);
+    }
+    glfwMakeContextCurrent(window);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize glad\n";
+        assert(false);
+    }    
+    glViewport(0, 0, 800, 600);
+
+    float verticies[] = {
+        0.0f, 0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f
+    };
+    Object triangle(
+        (float[]){
+        0.0f, 0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f
+        },
+        3,
+        "shaders/shader.vert",
+        "shaders/shader.frag"
+    );
+
+    while(!glfwWindowShouldClose(window))
+    {
+        glClearColor(0, 0, 0, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        triangle.draw();
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();    
+    }
+
+    glfwTerminate();
     return 0;
 }

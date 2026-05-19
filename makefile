@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -g $(INCDIR)
-SRC = main.cpp 
+SRC = main.cpp shader.cpp utill.cpp mesh.cpp object.cpp
 OBJ = $(SRC:.cpp=.o)
 SRCDIR = src
 BUILDDIR = build
@@ -16,6 +16,9 @@ $(BUILDDIR)/game: $(addprefix $(BUILDDIR)/, $(OBJ)) $(LIBDIR)/glad/glad.o
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(BUILDDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+run: $(addprefix $(BUILDDIR)/, $(OBJ)) $(BUILDDIR)/game
+	$(BUILDDIR)/game
 
 clean:
 	rm -rf $(BUILDDIR)
