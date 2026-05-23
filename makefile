@@ -1,11 +1,11 @@
 CXX = g++
 CXXFLAGS = -g $(INCDIR)
-SRC = main.cpp shader.cpp utill.cpp mesh.cpp object.cpp
+SRC = main.cpp shader.cpp utill.cpp mesh.cpp object.cpp texture.cpp
 OBJ = $(SRC:.cpp=.o)
 SRCDIR = src
 BUILDDIR = build
 LIBDIR = libs
-INCDIR = -Iinc/GLFW -Iinc/glad 
+INCDIR = -Iinc/GLFW -Iinc/glad -Iinc/stb -Iinc/glm 
 LDLIBS = -L$(LIBDIR)/glfw/ -L$(LIBDIR)/glad/ -lglfw3 -lopengl32 -lgdi32
 
 all: $(BUILDDIR)/game
