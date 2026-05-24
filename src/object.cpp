@@ -9,11 +9,7 @@ Object::Object(const float *vertices, const unsigned int *indicies, size_t verte
      mesh(vertices, vertex_size, indicies, indicies_size, elements, stride),
      shader(shader)
      {}
-Object::Object(Mesh& mesh, Shader& shader) : 
-     mesh(mesh),
-     shader(shader)
-     {}
-
+     
 void Object::draw()
 {
     shader.use();

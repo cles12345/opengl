@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -g $(INCDIR)
-SRC = main.cpp shader.cpp utill.cpp mesh.cpp object.cpp texture.cpp
+SRC = main.cpp shader.cpp utill.cpp mesh.cpp object.cpp texture.cpp camera.cpp
 OBJ = $(SRC:.cpp=.o)
 SRCDIR = src
 BUILDDIR = build

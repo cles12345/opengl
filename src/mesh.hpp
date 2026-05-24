@@ -12,7 +12,7 @@ enum VERTEX_TYPE
 class Mesh
 {
     public:
-        unsigned int VAO, VBO, EBO, vertices_count, indices_count, count, stride;
+        unsigned int VAO, VBO, EBO, indices_count, count, stride;
 
         Mesh(const float vertices[], size_t vertex_size, const unsigned int indicies[], size_t indicies_size, unsigned int elements, unsigned int stride);
         void bind();

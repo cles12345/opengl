@@ -1,7 +1,7 @@
 #include "mesh.hpp"
 
-Mesh::Mesh(const float vertices[], size_t vertex_size, const unsigned int indicies[], size_t indicies_size, unsigned int elements, unsigned int stride) : vertices_count(vertex_size/sizeof(float)/elements), 
-    indices_count(indicies_size/sizeof(unsigned int)), count(0), stride(stride)
+Mesh::Mesh(const float vertices[], size_t vertex_size, const unsigned int indicies[], size_t indicies_size, unsigned int elements, unsigned int stride) :  
+     indices_count(indicies_size/sizeof(unsigned int)), count(0), stride(stride)
 {
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -13,6 +13,7 @@ Mesh::Mesh(const float vertices[], size_t vertex_size, const unsigned int indici
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies_size, indicies, GL_STATIC_DRAW);
+    glBindVertexArray(0);
 }
 
 void Mesh::bind()

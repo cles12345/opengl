@@ -13,6 +13,9 @@
 #include "mesh.hpp"
 #include "object.hpp"
 #include "texture.hpp"
+#include "camera.hpp"
+
+void check_events(Camera& cam, GLFWwindow* window, float delta_time);
 
 int main(int argc, char const *argv[])
 {
@@ -89,7 +92,7 @@ int main(int argc, char const *argv[])
         indicies,
         sizeof(vertices),
         sizeof(indicies),
-        6,
+        8,
         32,
         "shaders/shader.vert",
         "shaders/shader.frag"
@@ -108,42 +111,31 @@ int main(int argc, char const *argv[])
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
     projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     
-    glm::vec3 cubePositions[] = {
-            glm::vec3( 0.0f,  0.0f,  0.0f), 
-            glm::vec3( 2.0f,  5.0f, -15.0f), 
-            glm::vec3(-1.5f, -2.2f, -2.5f),  
-            glm::vec3(-3.8f, -2.0f, -12.3f),  
-            glm::vec3( 2.4f, -0.4f, -3.5f),  
-            glm::vec3(-1.7f,  3.0f, -7.5f),  
-            glm::vec3( 1.3f, -2.0f, -2.5f),  
-            glm::vec3( 1.5f,  2.0f, -2.5f), 
-            glm::vec3( 1.5f,  0.2f, -1.5f), 
-            glm::vec3(-1.3f,  1.0f, -1.5f)  
-    };
+    glm::vec3 pos = glm::vec3( 0.0f,  0.0f,  0.0f);
 
+    Camera cam;
+
+    glEnable(GL_DEPTH_TEST);
+    float delta_time = 0.0f;
+    float last_frame = glfwGetTime();
     while(!glfwWindowShouldClose(window))
     {
         glClearColor(0, 0, 0, 1.0f);
-        glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        float current_frame = glfwGetTime();
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+
+        check_events(cam, window, delta_time);
+        view = cam.get_view();
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, pos);
         triangle.shader.set_uniform(model, "model");
         triangle.shader.set_uniform(view, "view");
         triangle.shader.set_uniform(projection, "projection");
 
-        triangle.shader.use();
-        triangle.mesh.bind();
-        for(unsigned int i = 0; i < 10; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i; 
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
-            triangle.shader.set_uniform(model, "model");
-
-            glDrawElements(GL_TRIANGLES, triangle.mesh.indices_count, GL_UNSIGNED_INT, 0);
-        }
-        glBindVertexArray(0);
+        triangle.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();    
@@ -151,4 +143,32 @@ int main(int argc, char const *argv[])
 
     glfwTerminate();
     return 0;
+}
+
+void check_events(Camera& cam, GLFWwindow* window, float delta_time)
+{
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        cam.move_forward(3.0f * delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        cam.move_backward(3.0f * delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        cam.move_right(3.0f * delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        cam.move_left(3.0f * delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        cam.move_up(3.0f * delta_time);
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+    {
+        cam.move_down(3.0f * delta_time);
+    }
 }
