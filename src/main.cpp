@@ -14,6 +14,7 @@
 #include "object.hpp"
 #include "texture.hpp"
 #include "camera.hpp"
+#include "block.hpp"
 
 void check_events(Camera& cam, GLFWwindow* window, float delta_time);
 
@@ -41,6 +42,7 @@ int main(int argc, char const *argv[])
     }    
     glViewport(0, 0, 800, 600);
 
+    
     float vertices[] = {
         // Front face
         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
@@ -87,34 +89,23 @@ int main(int argc, char const *argv[])
         16, 17, 18, 16, 18, 19,  // Top
         20, 21, 22, 20, 22, 23   // Bottom
     };
-    Object triangle(
-        vertices,
-        indicies,
-        sizeof(vertices),
-        sizeof(indicies),
-        8,
-        32,
-        "shaders/shader.vert",
-        "shaders/shader.frag"
-    );
 
-    triangle.mesh.set_layout(0, 3, FLOAT);
-    triangle.mesh.set_layout(1, 3, FLOAT);
-    triangle.mesh.set_layout(2, 2, FLOAT);
+    Mesh mesh(vertices, sizeof(vertices), indicies, sizeof(indicies), 8, 32);
+    Shader shader("shaders/shader.vert", "shaders/shader.frag");
 
-    Texture texture("sprite/texture.jpeg", GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+    mesh.set_layout(0, 3, FLOAT);
+    mesh.set_layout(1, 3, FLOAT);
+    mesh.set_layout(2, 2, FLOAT);
 
-    glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
     projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     
-    glm::vec3 pos = glm::vec3( 0.0f,  0.0f,  0.0f);
+    glm::vec3 pos = glm::vec3( 0.0f,  0.0f, -3.0f);
+
+    Block block("sprite/texture.jpeg");
 
     Camera cam;
-
     glEnable(GL_DEPTH_TEST);
     float delta_time = 0.0f;
     float last_frame = glfwGetTime();
@@ -128,14 +119,12 @@ int main(int argc, char const *argv[])
         last_frame = current_frame;
 
         check_events(cam, window, delta_time);
+        shader.use();
         view = cam.get_view();
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, pos);
-        triangle.shader.set_uniform(model, "model");
-        triangle.shader.set_uniform(view, "view");
-        triangle.shader.set_uniform(projection, "projection");
+        shader.set_uniform(view, "view");
+        shader.set_uniform(projection, "projection");
 
-        triangle.draw();
+        block.draw(shader, mesh, pos);
 
         glfwSwapBuffers(window);
         glfwPollEvents();    
